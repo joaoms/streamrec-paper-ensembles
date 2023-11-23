@@ -39,7 +39,7 @@ def TransformVec(V):
 
 class ICE_NMF(BISGD):
     def __init__(self, data: ImplicitData, 
-        num_clusters: int = 10, cl_num_iterations: int = 10, cl_learn_rate: float = 0.01, cl_regularization: float = 0.1,         
+        num_clusters: int = 10, overlap: float = 0.632, cl_num_iterations: int = 10, cl_learn_rate: float = 0.01, cl_regularization: float = 0.1,         
         num_factors: int = 10, num_iterations: int = 10, learn_rate: float = 0.01, regularization: float = 0.1, 
         random_seed: int = 1):
         """    Constructor.
@@ -55,6 +55,7 @@ class ICE_NMF(BISGD):
         regularization -- Regularization factor (float, default 0.01)
         random_seed -- Random seed (int, default 1)"""
 
+        self.overlap = overlap
         self.cl_num_iterations = cl_num_iterations
         self.cl_learn_rate = cl_learn_rate
         self.cl_regularization = cl_regularization
@@ -90,7 +91,7 @@ class ICE_NMF(BISGD):
         user_vector = self.metamodel_users[user_id]
         user_vector = TransformVec(user_vector)
 
-        for node in np.argsort(-user_vector)[:int(np.round(self.num_nodes*(1-0.368)))]:
+        for node in np.argsort(-user_vector)[:int(np.round(self.num_nodes * self.overlap))]:
             self._UpdateFactors(user_id, item_id, node)
 
     def _UpdateFactorsMeta(self, user_id, item_id, update_users: bool = True, update_items: bool = True, target: int = 1):
